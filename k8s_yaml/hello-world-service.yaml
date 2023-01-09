@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-world-nodeport
+  labels:
+    app: hello-world
+spec:
+  type: NodePort
+  ports:
+  - port: 3200
+    targetPort: 3000
+    nodePort: 30008
+  selector:
+    app: hello-world
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-world-loadbalancer
+  labels:
+    app: hello-world
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 4000
+    targetPort: 3000
+  selector:
+    app: hello-world
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-world-headless
+  labels:
+    app: hello-world
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+  - port: 5000
+    targetPort: 3000
+  selector:
+    app: hello-world
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-world-default
+  labels:
+    app: hello-world
+spec:
+  ports:
+  - port: 6000
+    targetPort: 3000
+  selector:
+    app: hello-world

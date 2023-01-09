@@ -8,18 +8,20 @@ spec:
   selector:
     matchLabels:
       app: hello-world
-  replicas: 10
+  replicas: 3
   template:
     metadata:
       labels:
         app: hello-world
     spec:
+      terminationGracePeriodSeconds: 3
       containers:
       - name: hello-world
         image: local/hello-world:v1
         imagePullPolicy: Never
         ports:
         - containerPort: 3000
+
 ---
 apiVersion: v1
 kind: Service
@@ -28,9 +30,10 @@ metadata:
   labels:
     app: hello-world
 spec:
-  type: LoadBalancer
+  type: NodePort
   ports:
   - port: 3000
     targetPort: 3000
+    nodePort: 30001
   selector:
     app: hello-world

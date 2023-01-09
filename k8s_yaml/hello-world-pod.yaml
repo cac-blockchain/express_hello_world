@@ -5,6 +5,7 @@ metadata:
   labels:
     app: hello-world
 spec:
+  terminationGracePeriodSeconds: 3
   containers:
   - name: hello-world
     image: local/hello-world:v1

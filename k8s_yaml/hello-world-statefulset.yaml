@@ -1,0 +1,38 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-world-headless
+  labels:
+    app: hello-world
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+  - port: 5000
+    targetPort: 3000
+  selector:
+    app: hello-world
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: hello-world
+spec:
+  selector:
+    matchLabels:
+      app: hello-world # .spec.template.metadata.labelsの値と一致する必要があります
+  serviceName: "hello-world-headless"
+  replicas: 3 
+  template:
+    metadata:
+      labels:
+        app: hello-world # .spec.selector.matchLabelsの値と一致する必要があります
+    spec:
+      terminationGracePeriodSeconds: 3
+      containers:
+      - name: hello-world
+        image: local/hello-world:v2
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3000

@@ -1,5 +1,6 @@
 FROM node:18.12.1-buster-slim
-
+RUN apt update
+RUN apt install -y dnsutils
 # アプリケーションディレクトリを作成する
 WORKDIR /usr/src/app
 
