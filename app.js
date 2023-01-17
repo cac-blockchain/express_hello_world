@@ -8,7 +8,8 @@ const os = require("os");
 const hostName = os.hostname();
 
 app.get('/', (req, res) => {
-  res.send('Hello World! from '+ hostName)
+  console.log(`${(new Date())} ${hostName} : access / v1`);
+  res.send(`${(new Date())} Hello World! from  ${hostName} v1`)
 })
 
 app.listen(port, () => {

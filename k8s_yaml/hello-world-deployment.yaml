@@ -18,7 +18,7 @@ spec:
       containers:
       - name: hello-world
         image: local/hello-world:v1
-        imagePullPolicy: Never
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3000
 
