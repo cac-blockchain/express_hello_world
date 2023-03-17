@@ -1,6 +1,8 @@
 FROM node:18.12.1-buster-slim
 RUN apt update
-RUN apt install -y dnsutils
+RUN apt install -y dnsutils 
+RUN apt-get update && apt-get install -y iproute2
+RUN apt-get update && apt-get install -y curl
 # アプリケーションディレクトリを作成する
 WORKDIR /usr/src/app
 

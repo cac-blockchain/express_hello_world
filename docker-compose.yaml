@@ -1,0 +1,30 @@
+#docker-compose up  --build service-b nihonshu-nfc service-health-check-back
+version: '3.3'
+
+services:
+  service-1:
+    container_name: service-1
+    build:
+      context: .
+    user: root
+    ports:
+      - "3001:3000"
+    healthcheck:
+      test: curl --fail http://localhost:3000 || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 60
+      start_period: 3s
+  service-2:
+    container_name: service-2
+    build:
+      context: .
+    user: root
+    ports:
+      - "3002:3000"
+    healthcheck:
+      test: curl --fail http://localhost:3000 || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 60
+      start_period: 3s

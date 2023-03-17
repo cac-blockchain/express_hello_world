@@ -1,0 +1,28 @@
+name: Azure Static Web Apps CI/CD
+
+on: push
+
+
+env:
+  NODE_VERSION: '18.x'                     # set this to the node version to use (supports 8.x, 10.x, 12.x, 14.x)
+
+jobs:
+  run-test:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Checkout GitHub action'
+      uses: actions/checkout@v2
+    - name: Setup Node ${{ env.NODE_VERSION }} Environment
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - name: 'run test'
+      shell: bash
+      run: |
+        docker-compose up  -d --build 
+        docker exec service-1 tc qdisc add dev eth0 root netem delay 5000ms
+        docker exec service-1 ping service-2
+        docker exec service-1 tc qdisc del dev eth0 root netem
+        docker exec service-1 ping service-2
+
