@@ -2,7 +2,9 @@ name: Azure Static Web Apps CI/CD
 
 on: push
 
-
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 env:
   NODE_VERSION: '18.x'                     # set this to the node version to use (supports 8.x, 10.x, 12.x, 14.x)
 
