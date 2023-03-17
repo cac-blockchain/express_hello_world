@@ -7,6 +7,8 @@ services:
     build:
       context: .
     user: root
+    cap_add:
+      - NET_ADMIN
     ports:
       - "3001:3000"
     healthcheck:
@@ -20,6 +22,8 @@ services:
     build:
       context: .
     user: root
+    cap_add:
+      - NET_ADMIN
     ports:
       - "3002:3000"
     healthcheck:
