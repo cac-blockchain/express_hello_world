@@ -57,3 +57,25 @@ kubectl exec -it hello-world-0 -- bash
 dig hello-world-headless.default.svc.cluster.local
 # podの固定DNS詳細
 dig hello-world-0.hello-world-headless.default.svc.cluster.local
+
+
+# 現在Nodeを確認する
+kubectl get nodes
+kubectl describe nodes/minikube
+# yamlをdeploy,deploy されないこと（pedding状態）
+kubectl apply -f k8s_yaml_detail/hello-world-node-affinity-required.yaml
+kubectl get pods
+kubectl describe pod/<pod-name>
+# node に　labelを追加
+kubectl label nodes minikube disktype=ssd
+# pod を確認(Running状態)
+kubectl get pod 
+
+# label削除
+kubectl label nodes minikube disktype-
+# 現在Nodeを確認する
+kubectl get nodes
+kubectl describe nodes/minikube
+# yamlをdeploy,deploy されないこと（Running状態）
+kubectl apply -f k8s_yaml_detail/hello-world-node-affinity-preferred.yaml
+kubectl get pods
