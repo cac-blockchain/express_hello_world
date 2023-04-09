@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pod-1
+  labels:
+    app: pod-1
+spec:
+  selector:
+    matchLabels:
+      app: pod-1
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: pod-1
+        security: S2
+    spec:
+      terminationGracePeriodSeconds: 3
+      affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: topology.kubernetes.io/zone
+                  operator: In
+                  values:
+                  - zone-2
+      containers:
+      - name: pod-1
+        image: busybox
+        imagePullPolicy: IfNotPresent
+        args:
+        - sleep
+        - "100000000"
+        ports:
+        - containerPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pod-2
+  labels:
+    app: pod-2
+spec:
+  selector:
+    matchLabels:
+      app: pod-2
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: pod-2
+    spec:
+      terminationGracePeriodSeconds: 3
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: security
+                  operator: In
+                  values:
+                  - S2
+              topologyKey: "topology.kubernetes.io/zone"
+      containers:
+      - name: pod-2
+        image: busybox
+        imagePullPolicy: IfNotPresent
+        args:
+        - sleep
+        - "100000000"
+        ports:
+        - containerPort: 3000
+

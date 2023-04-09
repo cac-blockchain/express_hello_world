@@ -98,3 +98,18 @@ kubectl delete -f k8s_yaml_detail/hello-world-pod-affinity-required.yaml
 kubectl apply -f k8s_yaml_detail/hello-world-pod-affinity-required.yaml
 # pod-1 と　pod-2 はzone-2 minikube-m02ノードに配置されるはず
 kubectl get pods -o wide
+
+
+# 3ノードのクラスターを作成
+minikube start --nodes=3
+# ノード確認
+kubectl get nodes
+# ノードのラベルを確認
+kubectl describe nodes/minikube
+# minikubeをzone-1 minikube-m02 minikube-m03 をzone-2
+kubectl label nodes minikube topology.kubernetes.io/zone=zone-1
+kubectl label nodes minikube-m02 topology.kubernetes.io/zone=zone-2
+kubectl label nodes minikube-m03 topology.kubernetes.io/zone=zone-2
+# pod-1が minikube-m02ノードに配置されるはず , pod-2が minikubeノードに配置されるはず 
+kubectl apply -f k8s_yaml_detail/hello-world-pod-anti-affinity-preferred.yaml
+kubectl get pods -o wide
