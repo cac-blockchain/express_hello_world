@@ -37,39 +37,25 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: hello-world-1
+  name: lifecycle-demo
   labels:
-    app: hello-world-1
+    app: lifecycle-demo
 spec:
-  terminationGracePeriodSeconds: 3
+  terminationGracePeriodSeconds: 10
   containers:
-  - name: hello-world-1
-    image: local/hello-world:v1
+  - name: lifecycle-demo
+    image: busybox:1.28
     imagePullPolicy: IfNotPresent
+    command: ['sh', '-c', 'while true; do echo - $name $(date) >> /var/www/html/share.txt && sleep 1; done;']
+    lifecycle:
+      postStart:
+        exec:
+          command: ["/bin/sh", "-c", "echo postStart $name $(date) >> /var/www/html/share.txt && sleep 3"]
+      preStop:
+        exec:
+          command: ["/bin/sh", "-c", "echo preStop $name $(date) >> /var/www/html/share.txt && sleep 3"]
     ports:
-      - containerPort: 3000
-    volumeMounts: 
-        - name: example-volume 
-          mountPath: /var/www/html # 任意のパス 
-  volumes: 
-      - name: example-volume 
-        persistentVolumeClaim: 
-          claimName: pv-claim-001
----
-apiVersion: v1
-kind: Pod
-metadata:
-  name: hello-world-2
-  labels:
-    app: hello-world-2
-spec:
-  terminationGracePeriodSeconds: 3
-  containers:
-  - name: hello-world-2
-    image: local/hello-world:v1
-    imagePullPolicy: IfNotPresent
-    ports:
-      - containerPort: 3000
+      - containerPort: 80
     volumeMounts: 
         - name: example-volume 
           mountPath: /var/www/html # 任意のパス 

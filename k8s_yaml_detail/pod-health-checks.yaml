@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: health-check-demo
+  labels:
+    app: health-check-demo
+spec:
+  terminationGracePeriodSeconds: 3
+  containers:
+  - name: health-check-demo
+    image: busybox:1.28
+    imagePullPolicy: IfNotPresent
+    command: ['sh', '-c', 'sleep 5 && while true; do echo - $name $(date) >> /var/health-check.txt && sleep 1; done;']
+    startupProbe:
+      exec:
+        command:
+        - 'sh'
+        - '-c'
+        - 'cat /var/health-check.txt && echo startupProbe >> /var/health-check.txt'
+      failureThreshold: 6
+      periodSeconds: 1
+      successThreshold: 1 #次のProbeが成功したとみなされるための最小連続成功数
+    livenessProbe:
+      exec:
+        command:
+        - 'sh'
+        - '-c'
+        - 'echo livenessProbe >> /var/health-check.txt'
+      initialDelaySeconds: 0 #最初のProbeを実行する前に5秒間待機する。最小値は0。
+      periodSeconds: 5 #5秒おきに行う
+      failureThreshold: 1 #失敗の試行回数（最小値は1）
+      successThreshold: 1 #次のProbeが成功したとみなされるための最小連続成功数
+    readinessProbe:
+      exec:
+        command:
+        - 'sh'
+        - '-c'
+        - 'echo readinessProbe >> /var/health-check.txt'
+      initialDelaySeconds: 0
+      periodSeconds: 1
+      failureThreshold: 1 #失敗の試行回数（最小値は1）
+      successThreshold: 1 #次のProbeが成功したとみなされるための最小連続成功数

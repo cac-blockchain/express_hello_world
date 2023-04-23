@@ -113,3 +113,30 @@ kubectl label nodes minikube-m03 topology.kubernetes.io/zone=zone-2
 # pod-1が minikube-m02ノードに配置されるはず , pod-2が minikubeノードに配置されるはず 
 kubectl apply -f k8s_yaml_detail/hello-world-pod-anti-affinity-preferred.yaml
 kubectl get pods -o wide
+
+# Init container
+# podを作成
+kubectl apply -f k8s_yaml_detail/Init-container-pod.yaml 
+# pod状態確認,init-myserviceがRunning状態、他はWaiting
+kubectl get pods
+kubectl describe pod myapp-pod
+# logをみる
+kubectl logs myapp-pod -c init-myservice 
+kubectl logs myapp-pod -c init-mydb  
+# service を作成
+kubectl apply -f k8s_yaml_detail/Init-container-service.yaml
+# pod 状況を再確認
+kubectl describe pod myapp-pod
+
+
+# 1秒ごとファイルに日付を書き込むアプリをdeploy
+kubectl apply -f k8s_yaml_detail/pod-postStart-preStop.yaml
+# /var/www/html/share.txtの書き込みを監視(postStartが実行される)
+kubectl exec  lifecycle-demo -- sh -c "tail -fn 100 /var/www/html/share.txt"
+# 別タブでPod削除(preStopが実行される)
+kubectl.exe delete pod/lifecycle-demo
+
+# 起動5秒かかる1秒ごとファイルに日付を書き込むアプリをdeploy
+kubectl.exe apply -f k8s_yaml_detail/pod-health-checks.yaml
+# health-check.txtの内容を確認
+kubectl.exe exec  health-check-demo -- sh -c "tail -fn 200 /var/health-check.txt"
