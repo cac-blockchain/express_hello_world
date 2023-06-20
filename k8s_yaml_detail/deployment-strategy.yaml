@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: strategy-recreate-demo
+  labels:
+    app: strategy-recreate-demo
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: strategy-recreate-demo
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: strategy-recreate-demo
+    spec:
+      terminationGracePeriodSeconds: 3
+      containers:
+      - name: strategy-recreate-demo
+        image: busybox:1.28
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'while true; do echo - $name $(date) >> /data/share.txt && sleep 1; done;']
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: strategy-rollingupdate-demo
+  labels:
+    app: strategy-rollingupdate-demo
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 50%
+  selector:
+    matchLabels:
+      app: strategy-rollingupdate-demo
+  replicas: 4
+  template:
+    metadata:
+      labels:
+        app: strategy-rollingupdate-demo
+    spec:
+      terminationGracePeriodSeconds: 3
+      containers:
+      - name: strategy-rollingupdate-demo
+        image: busybox:1.28
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'while true; do echo - $name $(date) >> /data/share.txt && sleep 1; done;']

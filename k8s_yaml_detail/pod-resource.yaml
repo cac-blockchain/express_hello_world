@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resource-demo
+  labels:
+    app: resource-demo
+spec:
+  selector:
+    matchLabels:
+      app: resource-demo
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: resource-demo
+    spec:
+      terminationGracePeriodSeconds: 3
+      containers:
+      - name: resource-demo
+        image: busybox:1.28
+        resources:
+          requests:
+            memory: "6Gi"
+          limits:
+            memory: "12Gi"
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'while true; do echo - $name $(date) >> /data/share.txt && sleep 1; done;']
