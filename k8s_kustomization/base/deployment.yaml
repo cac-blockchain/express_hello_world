@@ -17,8 +17,10 @@ spec:
       terminationGracePeriodSeconds: 3
       containers:
       - name: hello-world
-        image: local/hello-world:v1
+        image: busybox:1.28
         imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'while true; do echo - $name $(date) && sleep 1; done;']
+
         ports:
         - containerPort: 3000
         env:
